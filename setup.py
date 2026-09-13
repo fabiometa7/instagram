@@ -94,13 +94,25 @@ def main() -> int:
         access_token=token,
     ).get("data", [])
 
+    print(f"  found {len(pages)} Facebook Page(s) you admin:")
+    for p in pages:
+        ig = p.get("instagram_business_account")
+        tag = f"→ IG @{ig.get('username')} ({ig['id']})" if ig else "(no IG linked)"
+        print(f"    · {p['name']}  ({p['id']})  {tag}")
+
     ig_candidates = [
         (p["instagram_business_account"], p) for p in pages if p.get("instagram_business_account")
     ]
     if not ig_candidates:
-        print("  no IG business accounts found on any of your Pages.")
-        print("  Make sure @fabiometa_ is switched to Business/Creator AND linked")
-        print("  to a Facebook Page (IG app → Settings → Account → Linked accounts).")
+        print("\n  No Facebook Page above has an Instagram business account linked.")
+        print("  To fix:")
+        print("    1. In the Instagram app, open @fabiometa_ → Settings → 'Account type")
+        print("       and tools' → 'Switch to professional account' (Business or Creator).")
+        print("    2. During that setup (or after), tap 'Connect Facebook page' and pick")
+        print("       one of the Pages listed above (or create a new one you own).")
+        print("    3. If @fabiometa_ is already Professional, on the Facebook Page's")
+        print("       Settings → Linked Accounts → Instagram, link @fabiometa_.")
+        print("    4. Generate a fresh token in the Graph API Explorer, then re-run this.")
         return 1
 
     if len(ig_candidates) == 1:
