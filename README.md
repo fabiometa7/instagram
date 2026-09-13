@@ -14,14 +14,27 @@ Everything runs on your PC. Data stays in a local SQLite file (`data/hub.sqlite3
 
 ## Run it
 
-**Mac / Linux:**
-```bash
-./run.sh
-```
+Pick whichever feels best:
 
-**Windows:**
+**A) Double-click launcher (Mac).**
+In Finder, open the `instagram/` folder and double-click **`Content Hub.command`**. Terminal pops up, the server starts, your browser opens. Close the Terminal to stop it.
+
+**B) Real Mac app in your Dock.**
+```bash
+./scripts/build_mac_app.sh install
 ```
-run.bat
+Puts `Content Hub.app` in `/Applications/`. Open it once, then right-click its Dock icon → **Options → Keep in Dock**. Double-clicking it launches the server in the background and opens the dashboard. To stop the background server: `./scripts/stop_server.sh`.
+
+**C) Auto-start at login (Mac).**
+```bash
+./scripts/install_autostart.sh
+```
+Content Hub runs as a background launchd agent — starts at login, restarts if it crashes, always at <http://127.0.0.1:5000>. To turn off: `./scripts/install_autostart.sh off`.
+
+**D) Old-school terminal:**
+```bash
+./run.sh          # Mac / Linux
+run.bat           # Windows
 ```
 
 Then open <http://127.0.0.1:5000>. Hit **Refresh from Instagram** on the top-right to pull the latest data.
