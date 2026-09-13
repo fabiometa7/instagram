@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content Hub — @{{ username }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body data-username="{{ username }}">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">◐</div>
+      <div>
+        <h1>Content Hub</h1>
+        <span class="sub">@<span id="user">{{ username }}</span></span>
+      </div>
+    </div>
+    <div class="actions">
+      <span id="status" class="status muted">idle</span>
+      <button id="refreshBtn" class="btn primary">Refresh from Instagram</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="cards" id="kpiCards"></section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Follower history</h2>
+        <span class="hint" id="snapHint"></span>
+      </div>
+      <div class="chart-wrap"><canvas id="followerChart"></canvas></div>
+    </section>
+
+    <div class="grid-2">
+      <section class="panel">
+        <h2>Last 5 posts</h2>
+        <div id="recentList" class="post-list"></div>
+      </section>
+      <section class="panel">
+        <h2>What to post more of</h2>
+        <ul id="recs" class="recs"></ul>
+        <h3>By media type (last 50)</h3>
+        <div class="chart-wrap small"><canvas id="mediaChart"></canvas></div>
+      </section>
+    </div>
+
+    <div class="grid-2">
+      <section class="panel">
+        <h2>Engagement by day of week</h2>
+        <div class="chart-wrap small"><canvas id="dayChart"></canvas></div>
+      </section>
+      <section class="panel">
+        <h2>Engagement by hour (UTC)</h2>
+        <div class="chart-wrap small"><canvas id="hourChart"></canvas></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Top hashtags (by average engagement)</h2>
+      <div id="hashtags" class="tag-cloud"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Top 5 posts (last 50, by engagement rate)</h2>
+      <div id="topPosts" class="post-list"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
