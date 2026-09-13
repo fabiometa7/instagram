@@ -39,7 +39,8 @@ def _get(path: str, **params) -> dict:
 def _prompt(label: str, default: str = "", secret: bool = False) -> str:
     hint = f" [{default}]" if default else ""
     fn = getpass.getpass if secret else input
-    val = fn(f"{label}{hint}: ").strip()
+    raw = fn(f"{label}{hint}: ")
+    val = "".join(raw.split()).strip("'\"")
     return val or default
 
 
@@ -58,10 +59,21 @@ def _write_env(pairs: dict[str, str]) -> None:
 
 def main() -> int:
     print("Content Hub — Graph API setup\n")
+    print("Tip: if your token is very long, save it to token.txt in this")
+    print("     folder and press Enter at the prompt (it'll load it from there).\n")
     token = _prompt("Paste your Graph API user token", secret=True)
+    if not token:
+        token_file = Path(__file__).parent / "token.txt"
+        if token_file.exists():
+            token = "".join(token_file.read_text().split()).strip("'\"")
+            print(f"  loaded token from {token_file.name} ({len(token)} chars)")
     if not token:
         print("no token provided; aborting")
         return 1
+    print(f"  token: {token[:12]}…{token[-6:]} ({len(token)} chars)")
+    if len(token) < 100:
+        print("  ⚠ this looks too short for a Graph API token — likely truncated.")
+        print("    Try saving the full token to token.txt and re-running.")
 
     print("\n→ Verifying token…")
     debug = _get("debug_token", input_token=token, access_token=token).get("data", {})

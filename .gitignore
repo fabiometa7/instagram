@@ -2,5 +2,6 @@
 __pycache__/
 data/*.sqlite3
 .env
+token.txt
 *.pyc
 .DS_Store
