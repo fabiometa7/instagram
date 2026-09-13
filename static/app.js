@@ -4,6 +4,21 @@ const refreshBtn = document.getElementById("refreshBtn");
 
 const charts = {};
 
+function safeDate(s) {
+  if (!s) return null;
+  // Normalise "+0000" to "+00:00" so Safari parses it.
+  const norm = String(s).replace(/([+-]\d{2})(\d{2})$/, "$1:$2");
+  const d = new Date(norm);
+  return isNaN(d.getTime()) ? null : d;
+}
+function fmtDate(s, opts) {
+  const d = safeDate(s);
+  return d ? d.toLocaleDateString(undefined, opts || { month: "short", day: "numeric", year: "numeric" }) : "—";
+}
+function fmtDateTime(s) {
+  const d = safeDate(s);
+  return d ? d.toLocaleString() : "—";
+}
 function fmtNum(n) {
   if (n == null) return "—";
   if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -85,7 +100,7 @@ function replaceChart(key, config) {
 }
 
 function renderFollowerChart(history) {
-  const labels = history.map((h) => new Date(h.t).toLocaleString());
+  const labels = history.map((h) => fmtDateTime(h.t));
   const data = history.map((h) => h.followers);
   replaceChart("followerChart", {
     type: "line",
@@ -118,9 +133,7 @@ function renderPostList(posts) {
 }
 
 function postRow(p) {
-  const date = new Date(p.posted_at).toLocaleDateString(undefined, {
-    month: "short", day: "numeric", year: "numeric",
-  });
+  const date = fmtDate(p.posted_at);
   const cap = (p.caption || "").replace(/\s+/g, " ").trim() || "(no caption)";
   const views = p.video_views != null ? `<span>👁 ${fmtNum(p.video_views)}</span>` : "";
   return `

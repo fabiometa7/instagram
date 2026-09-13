@@ -10,6 +10,12 @@ DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 def _parse(dt: str) -> datetime:
+    # Graph API sends "+0000" (no colon); Python <3.11's fromisoformat needs "+00:00".
+    if len(dt) >= 5 and dt[-5] in "+-" and dt[-3] != ":":
+        dt = dt[:-2] + ":" + dt[-2:]
+    # Strip fractional-seconds Z if present, etc.
+    if dt.endswith("Z"):
+        dt = dt[:-1] + "+00:00"
     return datetime.fromisoformat(dt)
 
 

@@ -14,6 +14,13 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 init_db()
 
 
+@app.errorhandler(Exception)
+def _json_error(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"ok": False, "error": str(e)}), 500
+    raise e
+
+
 @app.route("/")
 def home():
     return render_template("index.html", username=DEFAULT_USER)
