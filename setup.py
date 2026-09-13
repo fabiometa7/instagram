@@ -90,29 +90,47 @@ def main() -> int:
     print("\n→ Looking up Instagram business accounts on your Pages…")
     pages = _get(
         "me/accounts",
-        fields="id,name,instagram_business_account{id,username,followers_count,media_count}",
+        fields="id,name,instagram_business_account{id,username,followers_count,media_count},"
+               "connected_instagram_account{id,username}",
         access_token=token,
+        limit=100,
     ).get("data", [])
 
-    print(f"  found {len(pages)} Facebook Page(s) you admin:")
+    print(f"  found {len(pages)} Facebook Page(s) accessible to this token:")
     for p in pages:
         ig = p.get("instagram_business_account")
-        tag = f"→ IG @{ig.get('username')} ({ig['id']})" if ig else "(no IG linked)"
+        conn = p.get("connected_instagram_account")
+        if ig:
+            tag = f"→ IG business @{ig.get('username')} ({ig['id']})"
+        elif conn:
+            tag = f"→ IG @{conn.get('username')} connected but NOT as Business/Creator"
+        else:
+            tag = "(no IG linked to this Page)"
         print(f"    · {p['name']}  ({p['id']})  {tag}")
 
     ig_candidates = [
         (p["instagram_business_account"], p) for p in pages if p.get("instagram_business_account")
     ]
     if not ig_candidates:
-        print("\n  No Facebook Page above has an Instagram business account linked.")
-        print("  To fix:")
-        print("    1. In the Instagram app, open @fabiometa_ → Settings → 'Account type")
-        print("       and tools' → 'Switch to professional account' (Business or Creator).")
-        print("    2. During that setup (or after), tap 'Connect Facebook page' and pick")
-        print("       one of the Pages listed above (or create a new one you own).")
-        print("    3. If @fabiometa_ is already Professional, on the Facebook Page's")
-        print("       Settings → Linked Accounts → Instagram, link @fabiometa_.")
-        print("    4. Generate a fresh token in the Graph API Explorer, then re-run this.")
+        print("\n  No Page above has an IG business account visible to this token.")
+        print("  This is almost always one of three things:\n")
+        print("  A) The token doesn't include the right Page.")
+        print("     In the Graph API Explorer, click the token → 'Add or Remove Pages'")
+        print("     (or regenerate the token). In the popup that Facebook shows,")
+        print("     make sure you EXPLICITLY select the Page @fabiometa_ is linked to.")
+        print("     'Ask again for the ones you didn't choose' means the Page is opted out.")
+        print()
+        print("  B) The Page shown above has @fabiometa_ connected but not as")
+        print("     Business/Creator (marked '(NOT as Business/Creator)' above).")
+        print("     On the Instagram app: Settings → Account type and tools →")
+        print("     Switch to Professional Account (Business or Creator).")
+        print()
+        print("  C) The Facebook Page you own isn't shown at all above.")
+        print("     Then @fabiometa_ isn't linked to a Page you admin.")
+        print("     Meta Business Suite → your Page → Linked Accounts → Instagram.")
+        print()
+        print("  After fixing, generate a NEW token (permissions may need re-approval)")
+        print("  and re-run: python3 setup.py")
         return 1
 
     if len(ig_candidates) == 1:
