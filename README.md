@@ -50,6 +50,12 @@ To enable:
    - `PAGE_ID?fields=instagram_business_account&access_token=...` → IG User ID
 6. Copy `.env.example` → `.env` and fill in `IG_GRAPH_TOKEN` and `IG_BUSINESS_ID`.
 
+**Shortcut:** instead of doing 5–6 by hand, run:
+```bash
+python setup.py
+```
+Paste your short-lived token when prompted. It'll verify the token, find your IG Business Account ID automatically, optionally exchange for a 60-day token (if you paste your App ID + App Secret), and write `.env` for you.
+
 Restart the app; it now uses the Graph API automatically.
 
 ## File layout
